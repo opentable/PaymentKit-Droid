@@ -223,6 +223,8 @@ public class FieldHolder extends RelativeLayout {
 
 		void onCardNumberInputReEntry();
 
+        void onExpirationEntry();
+
 		void onCVVEntry();
 
 		void onCVVEntryComplete();
@@ -282,7 +284,13 @@ public class FieldHolder extends RelativeLayout {
 			set.start();
 		}
 
-		@Override
+        @Override
+        public void onExpirationEntry() {
+            mCardIcon.flipTo(CardFace.FRONT);
+            mExpirationEditText.requestFocus();
+        }
+
+        @Override
 		public void onCVVEntry() {
 			mCardIcon.flipTo(CardFace.BACK);
 			mCVVEditText.requestFocus();

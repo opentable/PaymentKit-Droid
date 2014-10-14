@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
@@ -43,6 +44,7 @@ public class ExpirationEditText extends EditText {
 
 	private void setup() {
 		addTextChangedListener(mTextWatcher);
+        setOnFocusChangeListener(mFocusListener);
 	}
 
 	@Override
@@ -203,7 +205,16 @@ public class ExpirationEditText extends EditText {
         shakeAnim.start();
     }
 
-	@Override
+    private OnFocusChangeListener mFocusListener = new OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus) {
+                mListener.onExpirationEntry();
+            }
+        }
+    };
+
+    @Override
 	public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 		return new ZanyInputConnection(super.onCreateInputConnection(outAttrs), true);
 	}
