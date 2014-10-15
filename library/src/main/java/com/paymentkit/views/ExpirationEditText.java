@@ -89,12 +89,12 @@ public class ExpirationEditText extends EditText {
             mTextAdded = length() - mPrevLength > 0;
 		}
 
-
         private void validateAndFormatText(Editable s) {
             CharSequence month = validateMonth(getMonth());
             CharSequence year = validateYear(getYearAbv());
 
             if (didValidationPass(month, year)) {
+                ViewUtils.replaceAllText(s, month + "/" + year);
                 mListener.onCVVEntry();
             } else if (month.length() == 2 || !TextUtils.isEmpty(year)) {
                 ViewUtils.replaceAllText(s, month + "/" + year);
@@ -109,14 +109,17 @@ public class ExpirationEditText extends EditText {
             return month.length() == 2 && year.length() == 2;
         }
 
-
         private CharSequence validateMonth(String monthStr) {
             if (TextUtils.isEmpty(monthStr)) return "";
             // tens place of month validation
             int tensPlace = Integer.parseInt(getText().subSequence(0, 1).toString());
             if (mTextAdded && monthStr.length() == 1) {
                 if (tensPlace > 1) {
-                    return truncateAndIndicateInvalid("");
+                    if (monthStr.length() == 1) {
+                        return "0" + monthStr;
+                    } else {
+                        return truncateAndIndicateInvalid("");
+                    }
                 }
             } else if (mTextAdded && length() == 2) {
                 // one places of month validation
