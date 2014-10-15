@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.paymentkit.util.ToastUtils;
@@ -28,6 +30,7 @@ public class PKFragment extends Fragment {
 	private Button mSaveBtn;
 	private ImageView mAcceptedCardsImg;
 	private FieldHolder mFieldHolder;
+    private CheckBox mRequireZip;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +38,15 @@ public class PKFragment extends Fragment {
 		mSaveBtn = (Button) viewRoot.findViewById(R.id.save_btn);
 		mAcceptedCardsImg = (ImageView) viewRoot.findViewById(R.id.accepted_cards);
 		mFieldHolder = (FieldHolder) viewRoot.findViewById(R.id.field_holder);
+        mRequireZip = (CheckBox) viewRoot.findViewById(R.id.check_require_zip);
 		mSaveBtn.setOnClickListener(mSaveBtnListener);
+        mRequireZip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mFieldHolder.setRequirePostCode(isChecked);
+            }
+        });
+        mFieldHolder.setRequirePostCode(mRequireZip.isChecked());
 		return viewRoot;
 	}
 

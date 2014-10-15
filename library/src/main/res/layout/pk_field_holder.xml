@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.paymentkit.views.CardNumHolder
         android:id="@+id/card_num_holder"
@@ -22,12 +23,19 @@
 
     <LinearLayout
         android:id="@+id/extra_fields"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="50dp"
+        android:layout_toRightOf="@id/card_icon"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="60dp"
         android:addStatesFromChildren="true"
         android:orientation="horizontal" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="2"/>
 
         <com.paymentkit.views.ExpirationEditText
             android:id="@+id/expiration"
@@ -43,13 +51,17 @@
             android:textSize="@dimen/pk_checkout_input_field_text_size"
             android:color="@color/pk_DKGRAY" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
         <com.paymentkit.views.CVVEditText
             android:id="@+id/security_code"
             style="@style/pk_CheckoutAddCardField"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="40dp"
             android:contentDescription="Credit Card Security Code Field"
             android:hint=" CVV "
             android:imeOptions="actionDone|flagNoExtractUi"
@@ -58,6 +70,32 @@
             android:nextFocusRight="@null"
             android:textSize="@dimen/pk_checkout_input_field_text_size"
             android:color="@color/pk_DKGRAY" />
+
+        <View
+            android:id="@+id/post_code_spacer"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <com.paymentkit.views.PostCodeEditText
+            android:id="@+id/post_code"
+            style="@style/pk_CheckoutAddCardField"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:contentDescription="Postal Code Field"
+            android:hint="   ZIP "
+            android:imeOptions="actionDone|flagNoExtractUi"
+            android:inputType="number"
+            android:maxLength="5"
+            android:nextFocusRight="@null"
+            android:textSize="@dimen/pk_checkout_input_field_text_size"
+            android:color="@color/pk_DKGRAY"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
 </merge>

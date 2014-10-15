@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -36,10 +37,12 @@ public class FieldHolder extends RelativeLayout {
 	private CardNumHolder mCardHolder;
 	private ExpirationEditText mExpirationEditText;
 	private CVVEditText mCVVEditText;
-	private CardIcon mCardIcon;
+    private PostCodeEditText mPostCodeEditText;
+    private CardIcon mCardIcon;
 	private LinearLayout mExtraFields;
 
     private OnCardValidListener mCardValidListener;
+    private boolean requirePostCode;
 
     public FieldHolder(Context context) {
 		super(context);
@@ -67,6 +70,10 @@ public class FieldHolder extends RelativeLayout {
 		return mCardHolder;
 	}
 
+    public PostCodeEditText getPostCodeEditText() {
+        return mPostCodeEditText;
+    }
+
     public String getCVV() {
         return mCVVEditText.getText().toString();
     }
@@ -81,6 +88,18 @@ public class FieldHolder extends RelativeLayout {
 
     public String getExprYearAbv() {
         return mExpirationEditText.getYearAbv();
+    }
+
+    public void setRequirePostCode(boolean yesNo) {
+        requirePostCode = yesNo;
+        mPostCodeEditText.setVisibility(yesNo ? VISIBLE : GONE);
+        findViewById(R.id.post_code_spacer).setVisibility(yesNo ? VISIBLE : GONE);
+        int cvvNext = yesNo ? EditorInfo.IME_ACTION_NEXT : EditorInfo.IME_ACTION_DONE;
+        mCVVEditText.setImeOptions(cvvNext | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+    }
+
+    public String getPostCode() {
+        return mPostCodeEditText.getText().toString();
     }
 
     /** Returns a string with only numeric characters. **/
@@ -99,6 +118,8 @@ public class FieldHolder extends RelativeLayout {
         } else if (!mExpirationEditText.isValid()) {
             return false;
         } else if (!mCVVEditText.isValid()) {
+            return false;
+        } else if (requirePostCode && !mPostCodeEditText.isValid()) {
             return false;
         }
         return true;
@@ -126,8 +147,10 @@ public class FieldHolder extends RelativeLayout {
 		mExtraFields = (LinearLayout) findViewById(R.id.extra_fields);
 		mExpirationEditText = (ExpirationEditText) findViewById(R.id.expiration);
 		mCVVEditText = (CVVEditText) findViewById(R.id.security_code);
-		mCardHolder.setCardEntryListener(mCardEntryListener);
-		setupViews();
+        mPostCodeEditText = (PostCodeEditText) findViewById(R.id.post_code);
+        mCardHolder.setCardEntryListener(mCardEntryListener);
+        setRequirePostCode(mPostCodeEditText.getVisibility() == VISIBLE);
+        setupViews();
 	}
 	
 	private void setupViews() {
@@ -151,7 +174,8 @@ public class FieldHolder extends RelativeLayout {
 	private void setCardEntryListeners() {
 		mExpirationEditText.setCardEntryListener(mCardEntryListener);
 		mCVVEditText.setCardEntryListener(mCardEntryListener);
-	}
+        mPostCodeEditText.setCardEntryListener(mCardEntryListener);
+    }
 
 	private void validateCard() {
 		long cardNumber = Long.parseLong(mCardHolder.getCardField().getText().toString().replaceAll("\\s", ""));
@@ -210,6 +234,11 @@ public class FieldHolder extends RelativeLayout {
             mCVVEditText.indicateInvalidCVV();
             return true;
         }
+        if (!mPostCodeEditText.isValid()) {
+            mPostCodeEditText.requestFocus();
+            mPostCodeEditText.indicateInvalidPostCode();
+            return true;
+        }
         return false;
     }
 
@@ -232,6 +261,11 @@ public class FieldHolder extends RelativeLayout {
 
 		void onBackFromCVV();
 
+        void onPostCodeEntry();
+
+        void onPostCodeEntryComplete();
+
+        void onBackFromPostCode();
 	}
 
 	CardEntryListener mCardEntryListener = new CardEntryListener() {
@@ -302,10 +336,14 @@ public class FieldHolder extends RelativeLayout {
 
 		@Override
 		public void onCVVEntryComplete() {
-            if (!focusOnInvalidField()) {
-                mCardIcon.flipTo(CardFace.FRONT);
-                if (mCardValidListener != null) mCardValidListener.cardIsValid();
-                // complete
+            if (!requirePostCode) {
+                if (!focusOnInvalidField()) {
+                    mCardIcon.flipTo(CardFace.FRONT);
+                    if (mCardValidListener != null) mCardValidListener.cardIsValid();
+                    // complete
+                }
+            } else {
+                mPostCodeEditText.requestFocus();
             }
 		}
 
@@ -315,5 +353,22 @@ public class FieldHolder extends RelativeLayout {
 			mCardIcon.flipTo(CardFace.FRONT);
 		}
 
+        @Override
+        public void onPostCodeEntry() {
+            mCardIcon.flipTo(CardFace.FRONT);
+            mPostCodeEditText.requestFocus();
+        }
+
+        @Override
+        public void onPostCodeEntryComplete() {
+            if (!focusOnInvalidField()) {
+                if (requirePostCode && mCardValidListener != null) mCardValidListener.cardIsValid();
+            }
+        }
+
+        @Override
+        public void onBackFromPostCode() {
+            mCVVEditText.requestFocus();
+        }
 	};
 }

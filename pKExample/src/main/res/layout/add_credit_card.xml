@@ -65,4 +65,14 @@
         style="?android:editTextStyle">
     </com.paymentkit.views.FieldHolder>
 
+    <CheckBox
+        android:id="@+id/check_require_zip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/field_holder"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:text="Require Zip Code"
+        android:checked="true" />
+
 </RelativeLayout>
