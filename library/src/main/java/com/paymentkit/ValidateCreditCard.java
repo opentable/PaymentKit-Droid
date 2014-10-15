@@ -143,6 +143,48 @@ public final class ValidateCreditCard {
 			return CardType.UNKNOWN_CARD;
 	}
 
+    /**
+     * Finds a matching range in the ranges array for a given creditCardNumber.
+     *
+     * @param creditCardNumber
+     *          number on card.
+     *
+     * @return type of matching range, or on failure NOT_ENOUGH_DIGITS, TOO_MANY_DIGITS,
+     *         or UNKNOWN_CARD as appropriate.
+     */
+    public static CardType matchCardType(long creditCardNumber) {
+        String cardNum = Long.toString(creditCardNumber);
+        CardType type = getCardType(cardNum);
+        // Do range checks. The regular expression checks in getCardType() should handle
+        // everything but number of digits.
+        if (type != CardType.UNKNOWN_CARD) {
+            switch(type) {
+                case VISA:
+                case MASTERCARD:
+                case DISCOVER:
+                case JCB:
+                    if (cardNum.length() < 16)
+                        type = CardType.NOT_ENOUGH_DIGITS;
+                    else if (cardNum.length() > 16)
+                        type = CardType.TOO_MANY_DIGITS;
+                    break;
+                case AMERICAN_EXPRESS:
+                    if (cardNum.length() < 15)
+                        type = CardType.NOT_ENOUGH_DIGITS;
+                    else if (cardNum.length() > 15)
+                        type = CardType.TOO_MANY_DIGITS;
+                    break;
+                case DINERS_CLUB:
+                    if (cardNum.length() < 14)
+                        type = CardType.UNKNOWN_CARD;
+                    else if (cardNum.length() > 14)
+                        type = CardType.TOO_MANY_DIGITS;
+                    break;
+            }
+        }
+        return type;
+    }
+
 	/**
 	 * convert a String to a long. The routine is very forgiving. It ignores
 	 * invalid chars, lead trail, embedded spaces, decimal points etc, AND minus
