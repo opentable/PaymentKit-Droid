@@ -27,6 +27,7 @@ public class FieldHolder extends RelativeLayout {
 
 	public static final int AMEX_CARD_LENGTH = 17;
 	public static final int NON_AMEX_CARD_LENGTH = 19;
+    public static final int DINERS_CARD_LENGTH = 16;
 
 	private static final int RE_ENTRY_ALPHA_OUT_DURATION = 100;
 	private static final int RE_ENTRY_ALPHA_IN_DURATION = 500;
@@ -155,7 +156,7 @@ public class FieldHolder extends RelativeLayout {
 	private void validateCard() {
 		long cardNumber = Long.parseLong(mCardHolder.getCardField().getText().toString().replaceAll("\\s", ""));
 		if (ValidateCreditCard.isValid(cardNumber)) {
-			CardType cardType = ValidateCreditCard.matchCardType(cardNumber);
+			CardType cardType = ValidateCreditCard.getCardType(cardNumber);
 			mCardIcon.setCardType(cardType);
 			transitionToExtraFields();
 		} else {
@@ -247,6 +248,9 @@ public class FieldHolder extends RelativeLayout {
                 if (newCardType == CardType.AMERICAN_EXPRESS) {
                     mCardHolder.getCardField().setMaxCardLength(AMEX_CARD_LENGTH);
                     mCVVEditText.setCVVMaxLength(CVVEditText.CCV_AMEX_LENGTH);
+                } else if (newCardType == CardType.DINERS_CLUB) {
+                    mCardHolder.getCardField().setMaxCardLength(DINERS_CARD_LENGTH);
+                    mCVVEditText.setCVVMaxLength(CVVEditText.CCV_LENGTH);
                 } else {
                     mCardHolder.getCardField().setMaxCardLength(NON_AMEX_CARD_LENGTH);
                     mCVVEditText.setCVVMaxLength(CVVEditText.CCV_LENGTH);

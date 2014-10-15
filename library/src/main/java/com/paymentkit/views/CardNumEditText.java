@@ -131,7 +131,7 @@ public class CardNumEditText extends EditText {
         String strippedString = ValidateCreditCard.numericOnlyString(oldString);
         if(mMaxCardLength == FieldHolder.NON_AMEX_CARD_LENGTH) {
             newString = format16Text(strippedString);
-        } else if(mMaxCardLength == FieldHolder.AMEX_CARD_LENGTH) {
+        } else if(mMaxCardLength == FieldHolder.AMEX_CARD_LENGTH || mMaxCardLength == FieldHolder.DINERS_CARD_LENGTH) {
             newString = format15Text(strippedString);
         }
 
@@ -163,7 +163,7 @@ public class CardNumEditText extends EditText {
 	}
 
 	/*
-	 * 4-6-5
+	 * 4-6-5 (or 4-6-4)
 	 */
 	private String format15Text(String strippedStr) {
 		int len = strippedStr.length();
@@ -226,7 +226,8 @@ public class CardNumEditText extends EditText {
             if (mMaxCardLength == FieldHolder.NON_AMEX_CARD_LENGTH && (curPos == 5 || curPos == 10 || curPos == 15)) {
                 CardNumEditText.this.setSelection(curPos - 1);
                 return true;
-            } else if(mMaxCardLength == FieldHolder.AMEX_CARD_LENGTH && (curPos == 5 || curPos == 12)) {
+            } else if((mMaxCardLength == FieldHolder.AMEX_CARD_LENGTH || mMaxCardLength == FieldHolder.DINERS_CARD_LENGTH)
+                    && (curPos == 5 || curPos == 12)) {
                 CardNumEditText.this.setSelection(curPos - 1);
                 return true;
             }

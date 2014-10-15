@@ -56,16 +56,17 @@ public final class ValidateCreditCard {
 	 */
 	private static final boolean DEBUGGING = false;
 
-	/**
-	 * Used to speed up findMatchingRange by caching the last hit.
-	 */
-	private static int cachedLastFind;
-
-	/**
-	 * ranges of credit card number that belong to each company. buildRanges
-	 * initialises.
-	 */
-	private static LCR[] ranges;
+    /* Regular expressions for valid credit cards
+       from http://www.regular-expressions.info/creditcard.html
+       and http://en.wikipedia.org/wiki/Bank_card_number
+       modified slightly so that they make partial matches.
+     */
+    private static final String regex_VISA     = "^4(\\d+)?";
+    private static final String regex_MC       = "^5[1-5](\\d+)$";
+    private static final String regex_AMEX     = "^3[47](\\d+)$";
+    private static final String regex_DISCOVER = "^6(?:011|5|44)(\\d+)$";
+    private static final String regex_DINERS   = "^3(?:0[0-5]|[68]\\d)(\\d+)$";
+    private static final String regex_JCB      = "^(?:2131|1800|35\\d{3})(\\d+)$";
 
 	// -------------------------- PUBLIC STATIC METHODS --------------------------
 
@@ -80,7 +81,7 @@ public final class ValidateCreditCard {
 	 * @return true if card number is good.
 	 */
 	public static boolean isValid(long creditCardNumber) {
-		CardType cardType = matchCardType(creditCardNumber);
+		CardType cardType = getCardType(Long.toString(creditCardNumber));
 		if (cardType.isError()) {
 			return false;
 		} else {
@@ -118,58 +119,29 @@ public final class ValidateCreditCard {
 		}
 	}
 
+    public static CardType getCardType(long number) {
+        return getCardType(Long.toString(number));
+    }
+
 	public static CardType getCardType(String number) {
 		number = numericOnlyString(number);
-		if (number.toString().length() < 2)
+		if (number.length() < 2)
 			return CardType.UNKNOWN_CARD;
-		String firstChars = number.toString().substring(0, 2);
-		int range = Integer.parseInt(firstChars);
-		if (range >= 40 && range <= 49) {
-			return CardType.VISA;
-		} else if (range >= 50 && range <= 59) {
-			return CardType.MASTERCARD;
-		} else if (range == 34 || range == 37) {
-			return CardType.AMERICAN_EXPRESS;
-		} else if (range == 60 || range == 62 || range == 64 || range == 65) {
-			return CardType.DISCOVER;
-		} else if (range == 35) {
-			return CardType.JCB;
-		} else if (range == 30 || range == 36 || range == 38 || range == 39) {
-			return CardType.DINERS_CLUB;
-		} else {
+        if (number.matches(regex_VISA))
+            return CardType.VISA;
+        else if (number.matches(regex_MC))
+            return CardType.MASTERCARD;
+        else if (number.matches(regex_AMEX))
+            return CardType.AMERICAN_EXPRESS;
+        else if (number.matches(regex_DINERS))
+            return CardType.DINERS_CLUB;
+        else if (number.matches(regex_JCB))
+            return CardType.JCB;
+        else if (number.matches(regex_DISCOVER))
+            return CardType.DISCOVER;
+        else
 			return CardType.UNKNOWN_CARD;
-		}
 	}
-
-	/**
-	 * Finds a matching range in the ranges array for a given creditCardNumber.
-	 * 
-	 * @param creditCardNumber
-	 *          number on card.
-	 * 
-	 * @return index of matching range, or NOT_ENOUGH_DIGITS or UNKNOWN_VENDOR on
-	 *         failure.
-	 */
-	public static CardType matchCardType(long creditCardNumber) {
-		if (creditCardNumber < 1000000000000L) {
-			return CardType.NOT_ENOUGH_DIGITS;
-		}
-		if (creditCardNumber > 9999999999999999L) {
-			return CardType.TOO_MANY_DIGITS;
-		}
-		// check the cached index first, where we last found a number.
-		if (ranges[cachedLastFind].low <= creditCardNumber && creditCardNumber <= ranges[cachedLastFind].high) {
-			return ranges[cachedLastFind].cardType;
-		}
-		for (int i = 0; i < ranges.length; i++) {
-			if (ranges[i].low <= creditCardNumber && creditCardNumber <= ranges[i].high) {
-				// we have a match
-				cachedLastFind = i;
-				return ranges[i].cardType;
-			}
-		}// end for
-		return CardType.UNKNOWN_CARD;
-	}// end matchVendor
 
 	/**
 	 * convert a String to a long. The routine is very forgiving. It ignores
@@ -266,25 +238,6 @@ public final class ValidateCreditCard {
 
 	// -------------------------- STATIC METHODS --------------------------
 
-	static {
-		// now that all enum constants defined
-		buildRanges();
-	}
-
-	/**
-	 * build table of which ranges of credit card number belong to which vendor
-	 */
-	private static void buildRanges() {
-		// careful, no lead zeros allowed
-		// low high len vendor
-		ranges = new LCR[] { new LCR(4000000000000L, 4999999999999L/* 13 */, CardType.VISA),
-				new LCR(340000000000000L, 349999999999999L/* 15 */, CardType.AMERICAN_EXPRESS),
-				new LCR(370000000000000L, 379999999999999L/* 15 */, CardType.AMERICAN_EXPRESS),
-				new LCR(4000000000000000L, 4999999999999999L/* 16 */, CardType.VISA),
-				new LCR(5100000000000000L, 5599999999999999L/* 16 */, CardType.MASTERCARD),
-				new LCR(6011000000000000L, 6011999999999999L/* 16 */, CardType.DISCOVER) };
-	}
-
 	/**
 	 * used in computing checksums, doubles and adds resulting digits.
 	 * 
@@ -311,11 +264,11 @@ public final class ValidateCreditCard {
 	 */
 	public static void main(String[] args) {
 		if (DEBUGGING) {
-			out.println(matchCardType(0));// not enough digits
-			out.println(matchCardType(6011222233334444L));// Discover
-			out.println(matchCardType(6010222233334444L));// unknown vendor
-			out.println(matchCardType(4000000000000L));// Visa
-			out.println(matchCardType(4999999999999L));// Visa
+			out.println(getCardType(0));// not enough digits
+			out.println(getCardType(6011222233334444L));// Discover
+			out.println(getCardType(6010222233334444L));// unknown vendor
+			out.println(getCardType(4000000000000L));// Visa
+			out.println(getCardType(4999999999999L));// Visa
 			out.println(isValid(0));// false
 			out.println(isValid(6010222233334444L));// false
 			out.println(isValid(4000000000000L));// false
@@ -346,45 +299,4 @@ public final class ValidateCreditCard {
 																										// company
 		}// end if debugging
 	}// end main
-}
-
-/**
- * Describes a single Legal Card Range
- */
-final class LCR {
-	// ------------------------------ FIELDS ------------------------------
-
-	/**
-	 * enumeration credit card service
-	 */
-	public final CardType cardType;
-
-	/**
-	 * low and high bounds on range covered by this vendor
-	 */
-	public final long high;
-
-	/**
-	 * low bounds on range covered by this vendor
-	 */
-	public final long low;
-
-	// -------------------------- PUBLIC INSTANCE METHODS
-	// --------------------------
-
-	/**
-	 * public constructor
-	 * 
-	 * @param low
-	 *          lowest credit card number in range.
-	 * @param high
-	 *          highest credit card number in range
-	 * @param cardType
-	 *          enum constant for vendor
-	 */
-	public LCR(long low, long high, CardType cardType) {
-		this.low = low;
-		this.high = high;
-		this.cardType = cardType;
-	}// end public constructor
 }

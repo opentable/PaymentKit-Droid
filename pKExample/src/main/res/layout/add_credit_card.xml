@@ -46,13 +46,13 @@
 
     <ImageView
         android:id="@+id/accepted_cards"
-        android:layout_width="150dp"
-        android:layout_height="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/header"
-        android:layout_marginLeft="10dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:antialias="true"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:src="@drawable/pk_payment_icons" />
 
     <com.paymentkit.views.FieldHolder

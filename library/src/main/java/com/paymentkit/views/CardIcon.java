@@ -62,6 +62,12 @@ public class CardIcon extends FrameLayout {
 		case MASTERCARD:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_master));
 			break;
+        case JCB:
+            mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_jcb));
+            break;
+        case DINERS_CLUB:
+            mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_diners));
+            break;
 		default:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_default_card));
 		}
