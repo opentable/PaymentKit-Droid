@@ -1,4 +1,4 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 19
@@ -20,4 +20,16 @@ android {
 
 dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
+}
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = 'com.paymentkit'
+        pom.artifactId = 'paymentkit-android'
+        pom.version = '1.0.1'
+        // Add other pom properties here if you want (developer details / licenses)
+        repository(url: "file://${buildDir}/artifacts/${pom.version}")
+    }
 }
