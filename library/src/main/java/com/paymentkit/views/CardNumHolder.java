@@ -27,8 +27,9 @@ public class CardNumHolder extends FrameLayout {
 	private CardEntryListener mCardEntryListener;
 	private View mTopItem;
 	private int mSwitchIndex = 0;
+    private int defaultTextColor = Color.DKGRAY;
 
-	public CardNumHolder(Context context) {
+    public CardNumHolder(Context context) {
 		super(context);
 		setup();
 	}
@@ -50,10 +51,14 @@ public class CardNumHolder extends FrameLayout {
 		setClipChildren(false);
         setAddStatesFromChildren(true);
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.pk_card_holder, this, true);
-		mCardNumberEditText = (CardNumEditText) findViewById(R.id.credit_card_no);
-		mLastFourDigits = (InterceptEditText) findViewById(R.id.last_four_digits);
-		mTopItem = mLastFourDigits;
+		View v = inflater.inflate(R.layout.pk_card_holder, this, true);
+        if (!v.isInEditMode()) {
+            mCardNumberEditText = (CardNumEditText) v.findViewById(R.id.credit_card_no);
+            mLastFourDigits = (InterceptEditText) v.findViewById(R.id.last_four_digits);
+            mTopItem = mLastFourDigits;
+
+            defaultTextColor = mCardNumberEditText.getCurrentTextColor();
+        }
 	}
 
 	public boolean isCardNumValid() {
@@ -125,7 +130,7 @@ public class CardNumHolder extends FrameLayout {
 		mLeftOffset = fullWidth - fourDigitsWidth;
 		ViewUtils.setMarginLeft(mLastFourDigits, (int) mLeftOffset);
 		// align digits on right
-		mLastFourDigits.setTextColor(Color.DKGRAY);
+		mLastFourDigits.setTextColor(defaultTextColor);
 		mLastFourDigits.setVisibility(View.VISIBLE);
 	}
 
@@ -138,8 +143,8 @@ public class CardNumHolder extends FrameLayout {
 	}
 
     public void resetTextColor() {
-        if (mCardNumberEditText.getCurrentTextColor() != Color.DKGRAY) {
-            mCardNumberEditText.setTextColor(Color.DKGRAY);
+        if (mCardNumberEditText.getCurrentTextColor() != defaultTextColor) {
+            mCardNumberEditText.setTextColor(defaultTextColor);
         }
     }
 }

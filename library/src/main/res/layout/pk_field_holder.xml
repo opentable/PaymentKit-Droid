@@ -13,12 +13,11 @@
 
     <com.paymentkit.views.CardIcon
         android:id="@+id/card_icon"
-        android:layout_width="40dp"
+        android:layout_width="@dimen/pk_card_icon_width"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="0dp"
-        android:scaleType="centerInside"
         android:src="@drawable/pk_default_card" />
 
     <LinearLayout
@@ -46,10 +45,7 @@
             android:contentDescription="@string/pk_expiration_field_desc"
             android:hint="@string/pk_expiration_field_hint"
             android:imeOptions="actionNext|flagNoExtractUi"
-            android:inputType="number"
-            android:maxLength="5"
-            android:textSize="@dimen/pk_checkout_input_field_text_size"
-            android:color="@color/pk_DKGRAY" />
+            android:maxLength="5" />
 
         <View
             android:layout_width="0dp"
@@ -65,11 +61,8 @@
             android:contentDescription="Credit Card Security Code Field"
             android:hint=" CVV "
             android:imeOptions="actionDone|flagNoExtractUi"
-            android:inputType="number"
             android:maxLength="3"
-            android:nextFocusRight="@null"
-            android:textSize="@dimen/pk_checkout_input_field_text_size"
-            android:color="@color/pk_DKGRAY" />
+            android:nextFocusRight="@null" />
 
         <View
             android:id="@+id/post_code_spacer"
@@ -88,11 +81,8 @@
             android:contentDescription="Postal Code Field"
             android:hint="   ZIP "
             android:imeOptions="actionDone|flagNoExtractUi"
-            android:inputType="number"
             android:maxLength="5"
             android:nextFocusRight="@null"
-            android:textSize="@dimen/pk_checkout_input_field_text_size"
-            android:color="@color/pk_DKGRAY"
             android:visibility="gone"
             tools:visibility="visible" />
 

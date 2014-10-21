@@ -1,6 +1,7 @@
 package com.paymentkit.views;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,16 +142,18 @@ public class FieldHolder extends RelativeLayout {
 	
 	private void setup() {
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.pk_field_holder, this, true);
-		mCardHolder = (CardNumHolder) findViewById(R.id.card_num_holder);
-		mCardIcon = (CardIcon) findViewById(R.id.card_icon);
-		mExtraFields = (LinearLayout) findViewById(R.id.extra_fields);
-		mExpirationEditText = (ExpirationEditText) findViewById(R.id.expiration);
-		mCVVEditText = (CVVEditText) findViewById(R.id.security_code);
-        mPostCodeEditText = (PostCodeEditText) findViewById(R.id.post_code);
-        mCardHolder.setCardEntryListener(mCardEntryListener);
-        setRequirePostCode(mPostCodeEditText.getVisibility() == VISIBLE);
-        setupViews();
+		View v = inflater.inflate(R.layout.pk_field_holder, this, true);
+        if (!v.isInEditMode()) {
+            mCardHolder = (CardNumHolder) findViewById(R.id.card_num_holder);
+            mCardIcon = (CardIcon) findViewById(R.id.card_icon);
+            mExtraFields = (LinearLayout) findViewById(R.id.extra_fields);
+            mExpirationEditText = (ExpirationEditText) findViewById(R.id.expiration);
+            mCVVEditText = (CVVEditText) findViewById(R.id.security_code);
+            mPostCodeEditText = (PostCodeEditText) findViewById(R.id.post_code);
+            mCardHolder.setCardEntryListener(mCardEntryListener);
+            setRequirePostCode(mPostCodeEditText.getVisibility() == VISIBLE);
+            setupViews();
+        }
 	}
 	
 	private void setupViews() {
@@ -178,7 +181,8 @@ public class FieldHolder extends RelativeLayout {
     }
 
 	private void validateCard() {
-		long cardNumber = Long.parseLong(mCardHolder.getCardField().getText().toString().replaceAll("\\s", ""));
+        String input = mCardHolder.getCardField().getText().toString().replaceAll("\\s", "");
+		long cardNumber = input.length() > 0 ? Long.parseLong(input) : 0;
 		if (ValidateCreditCard.isValid(cardNumber)) {
 			CardType cardType = ValidateCreditCard.getCardType(cardNumber);
 			mCardIcon.setCardType(cardType);
