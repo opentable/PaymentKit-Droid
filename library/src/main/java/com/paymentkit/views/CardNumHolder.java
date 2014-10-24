@@ -119,6 +119,14 @@ public class CardNumHolder extends FrameLayout {
 		return mCardNumberEditText;
 	}
 
+    public boolean isOverlayShown() {
+        return mLastFourDigits.getVisibility() == VISIBLE;
+    }
+
+    public String getLastFourDigits() {
+        return mLastFourDigits.getText().toString();
+    }
+
 	public void createOverlay() {
 		// create 4 digits
 		String str = mCardNumberEditText.getText().toString();

@@ -4,7 +4,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        /* As of 2014-10-16, gradle plugin versions 0.13.2 and 0.13.3 will fail to
+           build the project with errors like:
+
+           Execution failed for task ':library:processDebugManifest'.
+           > NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
+
+         */
+        classpath 'com.android.tools.build:gradle:0.13.0'
         classpath 'com.github.dcendents:android-maven-plugin:1.0'
     }
 }
