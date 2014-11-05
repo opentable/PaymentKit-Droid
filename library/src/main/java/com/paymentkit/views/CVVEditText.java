@@ -137,6 +137,7 @@ public class CVVEditText extends EditText {
 	private TextWatcher mTextWatcher = new TextWatcher() {
 		@Override
 		public void afterTextChanged(Editable s) {
+            mListener.onCVVEdit();
 			if (s.length() == cvvMaxLength) {
 				mListener.onCVVEntryComplete();
 			}

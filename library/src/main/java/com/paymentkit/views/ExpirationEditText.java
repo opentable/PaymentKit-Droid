@@ -76,6 +76,8 @@ public class ExpirationEditText extends EditText {
 
             validateAndFormatText(s);
 
+            mListener.onExpirationEdit();
+
             addTextChangedListener(this);
 		}
 
@@ -211,7 +213,7 @@ public class ExpirationEditText extends EditText {
     private OnFocusChangeListener mFocusListener = new OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(hasFocus) {
+            if (hasFocus) {
                 mListener.onExpirationEntry();
             }
         }
@@ -238,6 +240,17 @@ public class ExpirationEditText extends EditText {
 			}
 			return super.sendKeyEvent(event);
 		}
+
+        @Override
+        public boolean performEditorAction(int editorAction) {
+            boolean shouldConsume = false;
+            switch (editorAction) {
+                case EditorInfo.IME_ACTION_DONE:
+                    shouldConsume = true;
+                    mListener.onCVVEntry();
+            }
+            return shouldConsume ? true : super.performEditorAction(editorAction);
+        }
 
         private void handleDelete() {
             if (getSelectionEnd() == 0) {

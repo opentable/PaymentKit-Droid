@@ -1,7 +1,6 @@
 package com.paymentkit.views;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +41,9 @@ public class FieldHolder extends RelativeLayout {
     private CardIcon mCardIcon;
 	private LinearLayout mExtraFields;
 
-    private OnCardValidListener mCardValidListener;
+    private OnValidationEventListener mCardValidListener;
     private boolean requirePostCode;
+    private boolean lastIsValid = false;
 
     public FieldHolder(Context context) {
 		super(context);
@@ -132,11 +132,26 @@ public class FieldHolder extends RelativeLayout {
      *
      * Or to send focus to your next view.
      */
-    public void setOnCardValidListener(OnCardValidListener listener) {
+    public void setOnCardValidListener(final OnCardValidListener listener) {
+        mCardValidListener = new OnValidationEventListener(){
+            @Override
+            public void onValidationEvent(boolean isValid) {
+                if (isValid)
+                    listener.cardIsValid();
+            }
+        };
+    }
+
+    /**
+     * Set listener for validation events. Listeners will be notified whenever a field value has
+     * changed and whether the data as a whole is now valid or invalid.
+     * @param listener
+     */
+    public void setOnValidationEventListener(final OnValidationEventListener listener) {
         mCardValidListener = listener;
     }
-	
-	public void lockCardNumField() {
+
+    public void lockCardNumField() {
 		transitionToExtraFields();
 	}
 	
@@ -249,7 +264,22 @@ public class FieldHolder extends RelativeLayout {
     public interface OnCardValidListener {
         public void cardIsValid();
     }
-	
+
+    public interface OnValidationEventListener {
+        public void onValidationEvent(boolean isValid);
+    }
+
+    /**
+     * Notify any registered OnValidationEventListener if and only if the valid state of all the data
+     * has changed.
+     */
+    private void notifyOnValidationEventListeners() {
+        boolean valid = isFieldsValid();
+        if (valid != lastIsValid && mCardValidListener != null)
+            mCardValidListener.onValidationEvent(valid);
+        lastIsValid = valid;
+    }
+
 	protected interface CardEntryListener {
 		void onCardNumberInputComplete();
 
@@ -259,13 +289,19 @@ public class FieldHolder extends RelativeLayout {
 
         void onExpirationEntry();
 
+        void onExpirationEdit();
+
 		void onCVVEntry();
+
+        void onCVVEdit();
 
 		void onCVVEntryComplete();
 
 		void onBackFromCVV();
 
         void onPostCodeEntry();
+
+        void onPostCodeEdit();
 
         void onPostCodeEntryComplete();
 
@@ -295,6 +331,7 @@ public class FieldHolder extends RelativeLayout {
                 }
                 mCardIcon.setCardType(newCardType);
             }
+            notifyOnValidationEventListeners();
 		}
 
 		@Override
@@ -328,22 +365,34 @@ public class FieldHolder extends RelativeLayout {
 
         @Override
         public void onExpirationEntry() {
+            notifyOnValidationEventListeners();
             mCardIcon.flipTo(CardFace.FRONT);
             mExpirationEditText.requestFocus();
         }
 
         @Override
+        public void onExpirationEdit() {
+            notifyOnValidationEventListeners();
+        }
+
+        @Override
 		public void onCVVEntry() {
+            notifyOnValidationEventListeners();
 			mCardIcon.flipTo(CardFace.BACK);
 			mCVVEditText.requestFocus();
 		}
+
+        @Override
+        public void onCVVEdit() {
+            notifyOnValidationEventListeners();
+        }
 
 		@Override
 		public void onCVVEntryComplete() {
             if (!requirePostCode) {
                 if (!focusOnInvalidField()) {
                     mCardIcon.flipTo(CardFace.FRONT);
-                    if (mCardValidListener != null) mCardValidListener.cardIsValid();
+                    notifyOnValidationEventListeners();
                     // complete
                 }
             } else {
@@ -359,14 +408,21 @@ public class FieldHolder extends RelativeLayout {
 
         @Override
         public void onPostCodeEntry() {
+            notifyOnValidationEventListeners();
             mCardIcon.flipTo(CardFace.FRONT);
             mPostCodeEditText.requestFocus();
         }
 
         @Override
+        public void onPostCodeEdit() {
+            notifyOnValidationEventListeners();
+        }
+
+        @Override
         public void onPostCodeEntryComplete() {
             if (!focusOnInvalidField()) {
-                if (requirePostCode && mCardValidListener != null) mCardValidListener.cardIsValid();
+                if (requirePostCode)
+                   notifyOnValidationEventListeners();
             }
         }
 
