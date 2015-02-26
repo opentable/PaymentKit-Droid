@@ -11,6 +11,7 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
 import android.widget.EditText;
 
+import com.paymentkit.CardType;
 import com.paymentkit.ValidateCreditCard;
 import com.paymentkit.util.ViewUtils;
 import com.paymentkit.views.FieldHolder.CardEntryListener;
@@ -52,6 +53,16 @@ public class CardNumEditText extends EditText {
 		setFilters(filters);
 	}
 
+	public void setMaxCardLength(CardType cardType) {
+		if (cardType == CardType.AMERICAN_EXPRESS) {
+			setMaxCardLength(FieldHolder.AMEX_CARD_LENGTH);
+		} else if (cardType == CardType.DINERS_CLUB) {
+			setMaxCardLength(FieldHolder.DINERS_CARD_LENGTH);
+		} else {
+			setMaxCardLength(FieldHolder.NON_AMEX_CARD_LENGTH);
+		}
+	}
+
     public String getLast4Digits() {
         String text = getText().toString().replaceAll("\\s", "");
         return text.substring(text.length() - 4, text.length());
@@ -67,13 +78,15 @@ public class CardNumEditText extends EditText {
             // Remove our selves while we edit this text.
             removeTextChangedListener(this);
 
+			CardType cardType = ValidateCreditCard.getCardType(s.toString());
+			setMaxCardLength(cardType);
+
             int oldSelectionPosition = getSelectionEnd();
             boolean removedTwoFromEnd = formatText(s);
             fixSelectionPosition(s, oldSelectionPosition, removedTwoFromEnd);
 
-
             // Notify listener
-            mCardEntryListener.onEdit();
+			mCardEntryListener.onEdit();
             if (isCardNumberInputComplete()) {
                 mCardEntryListener.onCardNumberInputComplete();
             }
