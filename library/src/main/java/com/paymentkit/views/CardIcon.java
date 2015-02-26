@@ -52,24 +52,31 @@ public class CardIcon extends FrameLayout {
 		switch (cardType) {
 		case VISA:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_visa));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
 			break;
 		case AMERICAN_EXPRESS:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_amex));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc_amex));
 			break;
 		case DISCOVER:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_discover));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
 			break;
 		case MASTERCARD:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_master));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
 			break;
         case JCB:
             mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_jcb));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
             break;
         case DINERS_CLUB:
             mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_diners));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
             break;
 		default:
 			mFrontFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_default_card));
+			mBackFace.setImageDrawable(getContext().getResources().getDrawable(R.drawable.pk_card_cvc));
 		}
 	}
 
