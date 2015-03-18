@@ -111,8 +111,7 @@ public class PostCodeEditText extends EditText {
                 boolean shouldConsume = false;
             switch (editorAction) {
                 case EditorInfo.IME_ACTION_DONE:
-                    shouldConsume = true;
-                    mListener.onPostCodeEntryComplete();
+					shouldConsume = mListener.onPostCodeEntryComplete();
             }
             return shouldConsume ? true : super.performEditorAction(editorAction);
         }

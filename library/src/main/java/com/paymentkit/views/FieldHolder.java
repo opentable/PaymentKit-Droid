@@ -8,6 +8,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -151,7 +152,12 @@ public class FieldHolder extends RelativeLayout {
         mCardValidListener = listener;
     }
 
-    public void lockCardNumField() {
+	public void setOnEditorActionListener(TextView.OnEditorActionListener onEditorActionListener) {
+		mPostCodeEditText.setOnEditorActionListener(onEditorActionListener);
+	}
+
+
+	public void lockCardNumField() {
 		transitionToExtraFields();
 	}
 	
@@ -303,7 +309,10 @@ public class FieldHolder extends RelativeLayout {
 
         void onPostCodeEdit();
 
-        void onPostCodeEntryComplete();
+		/**
+		 * @return true if the whole form validates.
+		 */
+		boolean onPostCodeEntryComplete();
 
         void onBackFromPostCode();
 	}
@@ -418,14 +427,15 @@ public class FieldHolder extends RelativeLayout {
             notifyOnValidationEventListeners();
         }
 
-        @Override
-        public void onPostCodeEntryComplete() {
-            if (!focusOnInvalidField()) {
-                if (requirePostCode)
-                   notifyOnValidationEventListeners();
-            }
-        }
-
+		@Override
+		public boolean onPostCodeEntryComplete() {
+			if (!focusOnInvalidField()) {
+				if (requirePostCode)
+					notifyOnValidationEventListeners();
+				return !isFieldsValid();
+			}
+			return false;
+		}
         @Override
         public void onBackFromPostCode() {
             mCVVEditText.requestFocus();
