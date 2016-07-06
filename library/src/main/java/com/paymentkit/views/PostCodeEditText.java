@@ -3,6 +3,7 @@ package com.paymentkit.views;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -18,9 +19,10 @@ import com.paymentkit.views.FieldHolder.CardEntryListener;
 
 public class PostCodeEditText extends EditText {
 
-    public static final int US_POST_CODE_LENGTH = 5;
-    private int postCodeMaxLength = US_POST_CODE_LENGTH;
+    public static final int MAX_POSTAL_CODE_LENGTH = 10;
+    private int postCodeMaxLength;
 
+	@SuppressWarnings("unused")
 	private static final String TAG = PostCodeEditText.class.getSimpleName();
 
 	private CardEntryListener mListener;
@@ -40,10 +42,13 @@ public class PostCodeEditText extends EditText {
 	private void setup() {
 		addTextChangedListener(mTextWatcher);
 		setOnFocusChangeListener(mFocusListener);
+		setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+		setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+		setPostCodeMaxLength(MAX_POSTAL_CODE_LENGTH);
 	}
 
     public boolean isValid() {
-        return postCodeMaxLength == getText().toString().length();
+        return postCodeMaxLength >= getText().toString().length();
     }
 	
 	public void setCardEntryListener(CardEntryListener listener) {
@@ -103,7 +108,7 @@ public class PostCodeEditText extends EditText {
                         mListener.onPostCodeEntryComplete(); break;
                 }
             }
-			return shouldConsume ? true : super.sendKeyEvent(event);
+			return shouldConsume || super.sendKeyEvent(event);
 		}
 
         @Override
@@ -113,7 +118,7 @@ public class PostCodeEditText extends EditText {
                 case EditorInfo.IME_ACTION_DONE:
 					shouldConsume = mListener.onPostCodeEntryComplete();
             }
-            return shouldConsume ? true : super.performEditorAction(editorAction);
+            return shouldConsume || super.performEditorAction(editorAction);
         }
 
         @Override
