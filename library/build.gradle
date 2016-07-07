@@ -13,14 +13,13 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "com.paymentkit"
         minSdkVersion 8
         targetSdkVersion 19
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -29,7 +28,7 @@ android {
 // Generate pom, ivy.xml
 // Note: We need the patched maven plugin since in the Android plugin, 'install' task is overridden
 // by 'installDebugTest', see: https://github.com/dcendents/android-maven-plugin
-apply plugin: 'android-maven'
+apply plugin: 'maven'
 // Basename of the AAR file (instead of 'library')
 archivesBaseName = 'paymentkit-android'
 uploadArchives {

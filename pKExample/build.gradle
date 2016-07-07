@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.brendan.pkexample"
@@ -12,7 +12,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -20,13 +20,13 @@ android {
 
 dependencies {
     compile project(':library')
-    compile 'com.android.support:support-v4:20.+'
+    compile 'com.android.support:support-v4:23.4.0'
 }
 
 // Generate pom, ivy.xml
 // Note: We need the patched maven plugin since in the Android plugin, 'install' task is overridden
 // by 'installDebugTest', see: https://github.com/dcendents/android-maven-plugin
-apply plugin: 'android-maven'
+apply plugin: 'maven'
 //2014-10-22 7:24PM - Maybe I shouldn't bother changing archivesBaseName and live with pKExample
 // Artifact/repository setup
 archivesBaseName = 'paymentkit-android-example'

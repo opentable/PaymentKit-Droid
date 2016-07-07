@@ -75,7 +75,9 @@
         <com.paymentkit.views.PostCodeEditText
             android:id="@+id/post_code"
             style="@style/pk_CheckoutAddCardField"
-            android:layout_width="50dp"
+			android:minWidth="50dp"
+			android:maxWidth="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:contentDescription="Postal Code Field"
@@ -83,8 +85,7 @@
             android:imeOptions="actionDone|flagNoExtractUi"
             android:maxLength="5"
             android:nextFocusRight="@null"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:visibility="visible"/>
 
     </LinearLayout>
 

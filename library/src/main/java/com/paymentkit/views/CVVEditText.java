@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ public class CVVEditText extends EditText {
     public static final int CCV_AMEX_LENGTH = 4;
     private int cvvMaxLength = CCV_LENGTH;
 	
+	@SuppressWarnings("unused")
 	private static final String TAG = CVVEditText.class.getSimpleName();
 	
 	private CardEntryListener mListener;
@@ -39,6 +41,7 @@ public class CVVEditText extends EditText {
 	}
 	
 	private void setup() {
+		setTransformationMethod(PasswordTransformationMethod.getInstance());
 		addTextChangedListener(mTextWatcher);
 		setOnFocusChangeListener(mFocusListener);
 	}
@@ -104,7 +107,7 @@ public class CVVEditText extends EditText {
                         mListener.onCVVEntryComplete(); break;
                 }
             }
-			return shouldConsume ? true : super.sendKeyEvent(event);
+			return shouldConsume || super.sendKeyEvent(event);
 		}
 
         @Override
@@ -115,7 +118,7 @@ public class CVVEditText extends EditText {
                     shouldConsume = true;
                     mListener.onCVVEntryComplete();
             }
-            return shouldConsume ? true : super.performEditorAction(editorAction);
+            return shouldConsume || super.performEditorAction(editorAction);
         }
 
         @Override
