@@ -11,7 +11,9 @@ buildscript {
            > NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
 
          */
-        classpath 'com.android.tools.build:gradle:2.1.0'
+		// NOTE: If you change/update the version number of the android build plugin, you must
+		// update it in the android-scripts/paymentkit-build-for-artifactory.gradle file as well
+		classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'com.github.dcendents:android-maven-plugin:1.0'
     }
 }
