@@ -43,7 +43,6 @@ public class PostCodeEditText extends EditText {
 		addTextChangedListener(mTextWatcher);
 		setOnFocusChangeListener(mFocusListener);
 		setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-		setFilters(new InputFilter[]{new InputFilter.AllCaps()});
 		setPostCodeMaxLength(MAX_POSTAL_CODE_LENGTH);
 	}
 
@@ -57,10 +56,9 @@ public class PostCodeEditText extends EditText {
 
     public void setPostCodeMaxLength(int val) {
         postCodeMaxLength = val;
-        InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(val);
-        setFilters(filters);
-    }
+		setFilters(new InputFilter[]{new InputFilter.AllCaps(),
+				new InputFilter.LengthFilter(val)});
+	}
 	
 	private OnFocusChangeListener mFocusListener = new OnFocusChangeListener() {
 		@Override
